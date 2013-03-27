@@ -57,7 +57,9 @@ class Oregon extends ObjectBehavior
         $packagist->get('Sylius/Sylius')->shouldBeCalled()->willReturn($package);
         $package->getDownloads()->shouldBeCalled()->willReturn($downloads);
         $downloads->getTotal()->shouldBeCalled()->willReturn(999999999);
+        $downloads->getMonthly()->shouldBeCalled()->willReturn(99999);
+        $downloads->getDaily()->shouldBeCalled()->willReturn(999);
 
-        $this->getDownloads()->shouldReturn(999999999);
+        $this->getDownloads()->shouldHaveType('Packagist\Api\Result\Package\Downloads');
     }
 }

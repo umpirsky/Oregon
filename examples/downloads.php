@@ -2,6 +2,8 @@
 
 require __DIR__.'/../vendor/autoload.php';
 
-$oregon = new Oregon\Oregon('Sylius');
+$downloads = (new Oregon\Oregon('Sylius'))->getDownloads();
 
-echo $oregon->getDownloads().PHP_EOL;
+printf('daily: %d%s', $downloads->getDaily(), PHP_EOL);
+printf('monthly: %d%s', $downloads->getMonthly(), PHP_EOL);
+printf('total: %d%s', $downloads->getTotal(), PHP_EOL);

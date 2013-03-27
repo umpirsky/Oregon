@@ -4,6 +4,7 @@ namespace Oregon;
 
 use Github\Client as Github;
 use Packagist\Api\Client as Packagist;
+use Packagist\Api\Result\Package\Downloads;
 use YaLinqo\Enumerable;
 
 class Oregon
@@ -56,12 +57,20 @@ class Oregon
 
     public function getDownloads()
     {
+        $downloads = new Downloads();
         $packagist = $this->packagist;
+        $packages = $this->packagist->all(array('vendor' => $this->organization));
 
-        return Enumerable::from(
-            $this->packagist->all(array('vendor' => $this->organization)))->sum(function($package) use ($packagist) {
-                return $packagist->get($package)->getDownloads()->getTotal();
-            }
-        );
+        $downloads->setTotal(Enumerable::from($packages)->sum(function($package) use ($packagist) {
+            return $packagist->get($package)->getDownloads()->getTotal();
+        }));
+        $downloads->setMonthly(Enumerable::from($packages)->sum(function($package) use ($packagist) {
+            return $packagist->get($package)->getDownloads()->getMonthly();
+        }));
+        $downloads->setDaily(Enumerable::from($packages)->sum(function($package) use ($packagist) {
+            return $packagist->get($package)->getDownloads()->getDaily();
+        }));
+
+        return $downloads;
     }
 }
