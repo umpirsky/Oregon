@@ -33,7 +33,7 @@ class Oregon
 
         foreach ($this->github->api('organization')->repositories($this->organization) as $repository) {
             $contributors = array_merge(
-                $this->github->api('repo')->contributors($this->organization, $repository['name']),
+                (array) $this->github->api('repo')->contributors($this->organization, $repository['name']),
                 $contributors
             );
         }
