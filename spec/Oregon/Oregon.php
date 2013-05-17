@@ -28,8 +28,8 @@ class Oregon extends ObjectBehavior
     function it_gets_contributors($github, $organization, $repo)
     {
         $organization->repositories('Sylius')->shouldBeCalled()->willReturn(array(
-            array('name' => 'Sylius'),
-            array('name' => 'SyliusPromotionsBundle'),
+            array('name' => 'Sylius', 'fork' => false),
+            array('name' => 'SyliusPromotionsBundle', 'fork' => false),
         ));
         $repo->contributors('Sylius', 'Sylius')->shouldBeCalled()->willReturn(array(
             array('id' => 1, 'contributions' => 5),
@@ -44,6 +44,25 @@ class Oregon extends ObjectBehavior
             array('id' => 2, 'contributions' => 10),
             array('id' => 1, 'contributions' => 8),
             array('id' => 3, 'contributions' => 3),
+        ));
+    }
+
+    function it_skips_forked_repositories($github, $organization, $repo)
+    {
+        $organization->repositories('Sylius')->shouldBeCalled()->willReturn(array(
+            array('name' => 'Sylius', 'fork' => false),
+            array('name' => 'SyliusPromotionsBundle', 'fork' => true),
+        ));
+        $repo->contributors('Sylius', 'Sylius')->shouldBeCalled()->willReturn(array(
+            array('id' => 1, 'contributions' => 5),
+            array('id' => 2, 'contributions' => 10),
+        ));
+
+        $repo->contributors('Sylius', 'SyliusPromotionsBundle')->shouldNotBeCalled();
+
+        $this->getContributors()->shouldReturn(array(
+            array('id' => 2, 'contributions' => 10),
+            array('id' => 1, 'contributions' => 5),
         ));
     }
 
