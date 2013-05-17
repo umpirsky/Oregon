@@ -32,10 +32,12 @@ class Oregon
         $contributors = array();
 
         foreach ($this->github->api('organization')->repositories($this->organization) as $repository) {
-            $contributors = array_merge(
-                (array) $this->github->api('repo')->contributors($this->organization, $repository['name']),
-                $contributors
-            );
+            if (!$repository['fork']) {
+                $contributors = array_merge(
+                    (array) $this->github->api('repo')->contributors($this->organization, $repository['name']),
+                    $contributors
+                );
+            }
         }
 
         return Enumerable::from($contributors)
